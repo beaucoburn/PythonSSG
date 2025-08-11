@@ -123,22 +123,43 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
 
     def test_all_text_types_coverage(self):
         """Test that all TextType enum values are handled"""
-        test_cases = [
-            (TextType.TEXT, "text", None, None, "text"),
-            (TextType.BOLD, "b", "bold text", None, "<b>bold text</b>"),
-            (TextType.ITALIC, "i", "italic text", None, "<i>italic text</i>"),
-            (TextType.CODE, "code", "code text", None, "<code>code text</code>"),
-            (TextType.LINK, "a", "link text", "http://example.com", '<a href="http://example.com">link text</a>'),
-            (TextType.IMAGE, "img", "alt text", "image.jpg", '<img src="image.jpg" alt="alt text"></img>'),
-        ]
+        # Test each type individually with clear expected values
         
-        for text_type, expected_tag, text, url, expected_html in test_cases:
-            with self.subTest(text_type=text_type):
-                node = TextNode(text, text_type, url)
-                html_node = text_node_to_html_node(node)
-                self.assertEqual(html_node.tag, expected_tag)
-                if expected_tag is not None:  # Skip HTML rendering test for raw text
-                    self.assertEqual(html_node.to_html(), expected_html)
+        # TEXT type - should have no tag (None)
+        text_node = TextNode("plain text", TextType.TEXT, None)
+        html_node = text_node_to_html_node(text_node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.to_html(), "plain text")
+        
+        # BOLD type
+        bold_node = TextNode("bold text", TextType.BOLD, None)
+        html_node = text_node_to_html_node(bold_node)
+        self.assertEqual(html_node.tag, "b")
+        self.assertEqual(html_node.to_html(), "<b>bold text</b>")
+        
+        # ITALIC type
+        italic_node = TextNode("italic text", TextType.ITALIC, None)
+        html_node = text_node_to_html_node(italic_node)
+        self.assertEqual(html_node.tag, "i")
+        self.assertEqual(html_node.to_html(), "<i>italic text</i>")
+        
+        # CODE type
+        code_node = TextNode("code text", TextType.CODE, None)
+        html_node = text_node_to_html_node(code_node)
+        self.assertEqual(html_node.tag, "code")
+        self.assertEqual(html_node.to_html(), "<code>code text</code>")
+        
+        # LINK type
+        link_node = TextNode("link text", TextType.LINK, "http://example.com")
+        html_node = text_node_to_html_node(link_node)
+        self.assertEqual(html_node.tag, "a")
+        self.assertEqual(html_node.to_html(), '<a href="http://example.com">link text</a>')
+        
+        # IMAGE type
+        image_node = TextNode("alt text", TextType.IMAGE, "image.jpg")
+        html_node = text_node_to_html_node(image_node)
+        self.assertEqual(html_node.tag, "img")
+        self.assertEqual(html_node.to_html(), '<img src="image.jpg" alt="alt text"></img>')
 
 
 if __name__ == "__main__":
