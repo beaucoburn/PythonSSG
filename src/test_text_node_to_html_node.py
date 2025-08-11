@@ -6,6 +6,7 @@ from text_node_to_html_node import text_node_to_html_node
 class TestTextNodeToHTMLNode(unittest.TestCase):
 
     def test_text(self):
+        """Test converting TEXT type TextNode"""
         node = TextNode("This is a text node", TextType.TEXT)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, None)
@@ -13,6 +14,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertIsNone(html_node.props)
 
     def test_bold(self):
+        """Test converting BOLD type TextNode"""
         node = TextNode("Bold text", TextType.BOLD)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "b")
@@ -20,6 +22,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertIsNone(html_node.props)
 
     def test_italic(self):
+        """Test converting ITALIC type TextNode"""
         node = TextNode("Italic text", TextType.ITALIC)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "i")
@@ -27,6 +30,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertIsNone(html_node.props)
 
     def test_code(self):
+        """Test converting CODE type TextNode"""
         node = TextNode("print('hello')", TextType.CODE)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "code")
@@ -34,6 +38,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertIsNone(html_node.props)
 
     def test_link(self):
+        """Test converting LINK type TextNode"""
         node = TextNode("Click me!", TextType.LINK, "https://www.google.com")
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "a")
@@ -41,6 +46,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertEqual(html_node.props, {"href": "https://www.google.com"})
 
     def test_image(self):
+        """Test converting IMAGE type TextNode"""
         node = TextNode("Alt text for image", TextType.IMAGE, "https://example.com/image.jpg")
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "img")
@@ -51,18 +57,21 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         })
 
     def test_link_without_url_raises_error(self):
+        """Test that LINK TextNode without URL raises ValueError"""
         node = TextNode("Link text", TextType.LINK, None)
         with self.assertRaises(ValueError) as context:
             text_node_to_html_node(node)
         self.assertEqual(str(context.exception), "Link TextNode must have a URL")
 
     def test_image_without_url_raises_error(self):
+        """Test that IMAGE TextNode without URL raises ValueError"""
         node = TextNode("Alt text", TextType.IMAGE, None)
         with self.assertRaises(ValueError) as context:
             text_node_to_html_node(node)
         self.assertEqual(str(context.exception), "Image TextNode must have a URL")
 
     def test_unsupported_text_type_raises_error(self):
+        """Test that unsupported TextType raises ValueError"""
         # Create a TextNode with an invalid text_type (simulate by directly setting)
         node = TextNode("Some text", TextType.TEXT)
         node.text_type = "INVALID_TYPE"  # Manually set invalid type
@@ -72,6 +81,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertIn("Unsupported TextType:", str(context.exception))
 
     def test_empty_text_values(self):
+        """Test conversion with empty text values"""
         # Empty TEXT
         node = TextNode("", TextType.TEXT)
         html_node = text_node_to_html_node(node)
@@ -84,11 +94,13 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertEqual(html_node.value, "")
 
     def test_special_characters_in_text(self):
+        """Test conversion with special characters"""
         node = TextNode("Text with <special> & characters", TextType.TEXT)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.value, "Text with <special> & characters")
 
     def test_conversion_output_html(self):
+        """Test that converted nodes can render HTML correctly"""
         # Test TEXT node rendering
         text_node = TextNode("Plain text", TextType.TEXT)
         html_node = text_node_to_html_node(text_node)
@@ -110,6 +122,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertEqual(html_node.to_html(), '<img src="image.jpg" alt="An image"></img>')
 
     def test_all_text_types_coverage(self):
+        """Test that all TextType enum values are handled"""
         test_cases = [
             (TextType.TEXT, "text", None, None, "text"),
             (TextType.BOLD, "b", "bold text", None, "<b>bold text</b>"),
