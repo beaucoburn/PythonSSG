@@ -1,11 +1,12 @@
 import unittest
 from textnode import TextNode, TextType
-from split_nodes_delimiter import split_nodes_delimiter
+from inline_markdown import split_nodes_delimiter
 
 
 class TestSplitNodesDelimiter(unittest.TestCase):
 
     def test_split_code_delimiter(self):
+        """Test splitting with backtick delimiter for code"""
         node = TextNode("This is text with a `code block` word", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
         
@@ -21,6 +22,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             self.assertEqual(new_nodes[i].text_type, expected_node.text_type)
 
     def test_split_bold_delimiter(self):
+        """Test splitting with ** delimiter for bold"""
         node = TextNode("This is text with a **bolded phrase** in the middle", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
         
@@ -36,6 +38,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             self.assertEqual(new_nodes[i].text_type, expected_node.text_type)
 
     def test_split_italic_delimiter(self):
+        """Test splitting with _ delimiter for italic"""
         node = TextNode("This is text with an _italic phrase_ here", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC)
         
@@ -51,6 +54,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             self.assertEqual(new_nodes[i].text_type, expected_node.text_type)
 
     def test_multiple_delimiters_same_type(self):
+        """Test text with multiple delimiters of the same type"""
         node = TextNode("Text with `code1` and `code2` blocks", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
         
@@ -68,6 +72,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             self.assertEqual(new_nodes[i].text_type, expected_node.text_type)
 
     def test_no_delimiter_in_text(self):
+        """Test text with no delimiter - should return original node"""
         node = TextNode("This is just plain text", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
         
@@ -76,6 +81,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
 
     def test_non_text_node_passed_through(self):
+        """Test that non-TEXT nodes are passed through unchanged"""
         nodes = [
             TextNode("Regular text", TextType.TEXT),
             TextNode("Bold text", TextType.BOLD),
@@ -91,6 +97,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertEqual(new_nodes[2].text_type, TextType.CODE)
 
     def test_delimiter_at_start(self):
+        """Test delimiter at the start of text"""
         node = TextNode("**Bold start** and regular text", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
         
@@ -105,6 +112,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             self.assertEqual(new_nodes[i].text_type, expected_node.text_type)
 
     def test_delimiter_at_end(self):
+        """Test delimiter at the end of text"""
         node = TextNode("Regular text and **bold end**", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
         
@@ -119,6 +127,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             self.assertEqual(new_nodes[i].text_type, expected_node.text_type)
 
     def test_entire_text_is_delimiter(self):
+        """Test when entire text is wrapped in delimiters"""
         node = TextNode("**entire text is bold**", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
         
@@ -127,6 +136,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertEqual(new_nodes[0].text_type, TextType.BOLD)
 
     def test_unmatched_delimiter_raises_error(self):
+        """Test that unmatched delimiter raises ValueError"""
         node = TextNode("This has unmatched `code delimiter", TextType.TEXT)
         
         with self.assertRaises(ValueError) as context:
@@ -136,6 +146,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertIn("`", str(context.exception))
 
     def test_empty_delimiter_content_raises_error(self):
+        """Test that empty content between delimiters raises ValueError"""
         node = TextNode("This has empty `` delimiters", TextType.TEXT)
         
         with self.assertRaises(ValueError) as context:
@@ -144,6 +155,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertIn("Invalid markdown syntax: empty content", str(context.exception))
 
     def test_adjacent_delimiters(self):
+        """Test adjacent delimiters with different content"""
         node = TextNode("Text `code1``code2` end", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
         
@@ -160,6 +172,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertTrue(len(new_nodes) >= 3)  # At least the core parts
 
     def test_multiple_nodes_input(self):
+        """Test processing multiple nodes in input list"""
         nodes = [
             TextNode("First `code` node", TextType.TEXT),
             TextNode("Already bold", TextType.BOLD),
@@ -180,10 +193,12 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertEqual(bold_node.text, "Already bold")
 
     def test_empty_input_list(self):
+        """Test empty input list"""
         new_nodes = split_nodes_delimiter([], "`", TextType.CODE)
         self.assertEqual(len(new_nodes), 0)
 
     def test_different_delimiter_types(self):
+        """Test various delimiter types work correctly"""
         test_cases = [
             ("Text with `code`", "`", TextType.CODE, "code"),
             ("Text with **bold**", "**", TextType.BOLD, "bold"),
@@ -207,6 +222,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
                 self.assertEqual(found_node.text, expected_content)
 
     def test_empty_text_parts_filtered(self):
+        """Test that empty text parts are properly handled"""
         node = TextNode("**bold**", TextType.TEXT)  # No text before or after
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
         
