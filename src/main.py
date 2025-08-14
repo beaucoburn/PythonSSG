@@ -1,6 +1,7 @@
 import os
 import shutil
 import logging
+import sys
 from textnode import TextNode, TextType
 from generate_pages_recursive import generate_pages_recursive
 
@@ -68,19 +69,23 @@ def main():
     """Main function to run the static site generator"""
     print("Starting static site generator...")
     
+    # Get basepath from command line arguments, default to "/" for local development
+    basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
+    print(f"Using basepath: {basepath}")
+    
     # Define source and destination directories
     static_dir = "static"
-    public_dir = "public"
+    dest_dir = "docs" if basepath != "/" else "public"
     
-    # Copy static files to public directory
-    print(f"Copying static files from '{static_dir}' to '{public_dir}'...")
-    copy_static_files(static_dir, public_dir)
+    # Copy static files to destination directory
+    print(f"Copying static files from '{static_dir}' to '{dest_dir}'...")
+    copy_static_files(static_dir, dest_dir)
     
     print("Static file copying completed!")
     
     # Generate all HTML pages recursively from markdown
     print("Generating HTML pages...")
-    generate_pages_recursive("content", "template.html", "public")
+    generate_pages_recursive("content", "template.html", dest_dir, basepath)
     
     print("Page generation completed!")
     print("Site is ready!")
