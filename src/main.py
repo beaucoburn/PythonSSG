@@ -2,7 +2,7 @@ import os
 import shutil
 import logging
 from textnode import TextNode, TextType
-from generate_page import generate_page
+from generate_pages_recursive import generate_pages_recursive
 
 # Set up logging to see what's happening during the copy process
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -78,17 +78,9 @@ def main():
     
     print("Static file copying completed!")
     
-    # Generate the main page from markdown
+    # Generate all HTML pages recursively from markdown
     print("Generating HTML pages...")
-    generate_page("content/index.md", "template.html", "public/index.html")
-    
-    # Generate blog pages
-    generate_page("content/blog/glorfindel/index.md", "template.html", "public/blog/glorfindel/index.html")
-    generate_page("content/blog/tom/index.md", "template.html", "public/blog/tom/index.html")
-    generate_page("content/blog/majesty/index.md", "template.html", "public/blog/majesty/index.html")
-    
-    # Generate contact page
-    generate_page("content/contact/index.md", "template.html", "public/contact/index.html")
+    generate_pages_recursive("content", "template.html", "public")
     
     print("Page generation completed!")
     print("Site is ready!")
