@@ -2,6 +2,7 @@ import os
 import shutil
 import logging
 from textnode import TextNode, TextType
+from generate_page import generate_page
 
 # Set up logging to see what's happening during the copy process
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -77,8 +78,12 @@ def main():
     
     print("Static file copying completed!")
     
-    # TODO: Add markdown processing and HTML generation here
-    print("Ready for markdown processing...")
+    # Generate the main page from markdown
+    print("Generating HTML page...")
+    generate_page("content/index.md", "template.html", "public/index.html")
+    
+    print("Page generation completed!")
+    print("Site is ready!")
 
 
 if __name__ == "__main__":
