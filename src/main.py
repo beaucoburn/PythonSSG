@@ -79,8 +79,16 @@ def main():
     print("Static file copying completed!")
     
     # Generate the main page from markdown
-    print("Generating HTML page...")
+    print("Generating HTML pages...")
     generate_page("content/index.md", "template.html", "public/index.html")
+    
+    # Generate blog pages
+    generate_page("content/blog/glorfindel/index.md", "template.html", "public/blog/glorfindel/index.html")
+    generate_page("content/blog/tom/index.md", "template.html", "public/blog/tom/index.html")
+    generate_page("content/blog/majesty/index.md", "template.html", "public/blog/majesty/index.html")
+    
+    # Generate contact page
+    generate_page("content/contact/index.md", "template.html", "public/contact/index.html")
     
     print("Page generation completed!")
     print("Site is ready!")
